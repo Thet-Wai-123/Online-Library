@@ -2,11 +2,9 @@ extends layout
 
 block content
   h1= title
-  p Welcome to #[em LocalLibrary], a very basic Express website developed as a tutorial example on the Mozilla Developer Network.
+  p Welcome to #[em LocalLibrary], a very basic Express website developed as a tutorial example on the Mozilla Developer Network. Additionally expanded with more update forms, a search bar and a recommend book function
 
-  h1 Dynamic content
-
-  p The library has the following record counts:
+  h1 The library has the following record counts:
 
   ul
     li #[strong Books:] !{book_count}
@@ -14,3 +12,5 @@ block content
     li #[strong Copies available:] !{book_instance_available_count}
     li #[strong Authors:] !{author_count}
     li #[strong Genres:] !{genre_count}
+
+  a(class='button' href='/catalog/recommendation') Recommend me a random book

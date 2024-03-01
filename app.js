@@ -27,7 +27,7 @@ const limiter = RateLimit({
   max: 20,
 });
 // Apply rate limiter to all requests
-app.use(limiter);
+//app.use(limiter);
 
 
 // Set up mongoose connection

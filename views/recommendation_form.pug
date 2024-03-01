@@ -1,0 +1,14 @@
+extends layout
+
+block content
+    h1 Select genres that you would like to read 
+
+    form(method="POST")
+        div.form-group
+            label Genre:
+        div
+            for genre in genres
+                div(style='display: inline; padding-right:10px;')
+                    input.checkbox-input(type='checkbox', name='genre', id=genre._id, value=genre._id)
+                    label(for=genre._id) &nbsp;#{genre.name}
+        button.btn.btn-primary(type='submit') Submit
