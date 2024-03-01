@@ -114,7 +114,7 @@ exports.book_create_post = [
     // Create a Book object with escaped and trimmed data.
     const book = new Book({
       title: req.body.title,
-      author: req.body.author,
+      author: req.body.author._id,
       summary: req.body.summary,
       isbn: req.body.isbn,
       genre: req.body.genre,
