@@ -121,32 +121,4 @@ exports.bookinstance_update_post = asyncHandler(async (req, res, next) => {
   res.send("NOT IMPLEMENTED: BookInstance update POST");
 });
 
-//Display Recommendation form on GET.
-exports.recommendation_get = asyncHandler(async (req, res, next) => {
-  const genres = await Genre.find();
-  res.render("recommendation_form", { genres: genres === null ? [] : genres });
-});
 
-//Returns a random recommended book on POST.
-exports.recommendation_post = [
-  // Convert the genre to an array.
-  (req, res, next) => {
-    if (!Array.isArray(req.body.genre)) {
-      req.body.genre =
-        typeof req.body.genre === "undefined" ? [] : [req.body.genre];
-    }
-    next();
-  },
-  asyncHandler(async (req, res, next) => {
-    const bookWithMatchingGenre = await BookInstance.find({ status: "Available" }, "book")
-      .populate("book")
-      .findOne({ "book.genre": req.body.genre })
-      .exec();
-
-    if (bookWithMatchingGenre === null) {
-      res.render("recommendation_result");
-    } else {
-      res.render("recommendation_result", { book: bookWithMatchingGenre });
-    }
-  }),
-];

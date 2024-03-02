@@ -1,0 +1,13 @@
+extends layout
+
+
+block content
+
+
+    if foundBooks.length
+        h1 Found Books
+        each book in foundBooks
+            li
+                a(href=book.url) #{book.title} 
+    else 
+        h1 No Books Found

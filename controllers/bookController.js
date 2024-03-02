@@ -3,7 +3,7 @@ const Author = require("../models/author");
 const Genre = require("../models/genre");
 const BookInstance = require("../models/bookinstance");
 const { body, validationResult } = require("express-validator");
-
+const mongoose = require("mongoose");
 const asyncHandler = require("express-async-handler");
 
 exports.index = asyncHandler(async (req, res, next) => {
@@ -114,7 +114,7 @@ exports.book_create_post = [
     // Create a Book object with escaped and trimmed data.
     const book = new Book({
       title: req.body.title,
-      author: req.body.author._id,
+      author: req.body.author,
       summary: req.body.summary,
       isbn: req.body.isbn,
       genre: req.body.genre,
@@ -284,3 +284,71 @@ exports.book_update_post = [
     }
   }),
 ];
+
+//Display Recommendation form on GET.
+exports.recommendation_get = asyncHandler(async (req, res, next) => {
+  const genres = await Genre.find();
+  res.render("recommendation_form", { genres: genres === null ? [] : genres });
+});
+
+//Returns a random recommended book on POST.
+exports.recommendation_post = [
+  // Convert the genre to an array.
+  asyncHandler(async (req, res, next) => {
+    const allGenres = (await Genre.find({}, { _id: 1 })).map((genreDoc) => {
+      genreDoc._id.toString();
+    });
+    if (!Array.isArray(req.body.genre)) {
+      req.body.genre =
+        typeof req.body.genre === "undefined"
+          ? [allGenres._id]
+          : [req.body.genre];
+    }
+    next();
+  }),
+  asyncHandler(async (req, res, next) => {
+    //convert the array of genresIDs to mongodb objectID first
+    const filteredGenres = req.body.genre.map(
+      (genre) => new mongoose.Types.ObjectId(genre)
+    );
+    const bookWithMatchingGenre = await Book.aggregate([
+      { $match: { genre: { $in: filteredGenres } } },
+      { $sample: { size: 1 } },
+    ]);
+    if (bookWithMatchingGenre.length === 0) {
+      res.render("recommendation_result");
+    } else {
+      //could've done lookup but I wanted to keep the url from the model, and this allows to do so
+      const returnedBooksPopulated = await Book.findById(
+        bookWithMatchingGenre[0]._id,
+        "title genre"
+      )
+        .populate("genre")
+        .exec();
+      console.log(returnedBooksPopulated.genre[0].name);
+      res.render("recommendation_result", { book: returnedBooksPopulated });
+    }
+  }),
+];
+
+exports.book_search = asyncHandler(async (req, res, next) => {
+  //remove stop words, split them into an array and find using RegEx
+  const search = req.body.searchedWord;
+  let keyWords = search
+    .replace(/\bthe\b|\ba\b|\bis\b|\bon\b/gi, "")
+    .split(/\s+/)
+    .join("|");
+  // Check if the first and lsat character is '|', otherwise regex will always return true
+  if (keyWords.charAt(0) === "|") {
+    keyWords = keyWords.slice(1);
+  }
+  if (keyWords.charAt(keyWords.length - 1) === "|") {
+    keyWords = keyWords.slice(0, -1);
+  }
+  const foundBooks = await Book.find({
+    title: { $regex: keyWords, $options: "i" },
+  });
+  res.render("search_result", { foundBooks: foundBooks });
+
+  //better implementation would be to keep track of how many times a regex matches, may need to use $split in aggregation or js map
+});

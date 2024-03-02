@@ -4,6 +4,11 @@ block content
   h1= title
   p Welcome to #[em LocalLibrary], a very basic Express website developed as a tutorial example on the Mozilla Developer Network. Additionally expanded with more update forms, a search bar and a recommend book function
 
+  form(action='/catalog/search', method='POST')
+    label(for='searchWord') Search Bar:
+    input(type='text' name='searchedWord' id='searchedWord' placeholder='Book name' required)
+    button(type='submit') Search for a Book
+
   h1 The library has the following record counts:
 
   ul
@@ -14,3 +19,5 @@ block content
     li #[strong Genres:] !{genre_count}
 
   a(class='button' href='/catalog/recommendation') Recommend me a random book
+
+  

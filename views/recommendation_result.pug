@@ -3,6 +3,11 @@ extends layout
 block content
     if book 
         h1 Recommended Book Found 
-        h1= book 
+        h1 
+            a(href=book.url) #{book.title}
+            
+        h1
+            each genre in book.genre 
+                 a(href=genre.url) #{genre.name}
     else 
         h1 No book found for that genre

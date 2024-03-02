@@ -10,9 +10,9 @@ block content
         option(value='') --Please select a book--
         for book in book_list
           if selected_book==book._id.toString()
-            option(value=book, selected) #{book.title}
+            option(value=book._id, selected) #{book.title}
           else
-            option(value=book) #{book.title}
+            option(value=book._id) #{book.title}
 
     div.form-group
       label(for='imprint') Imprint:
