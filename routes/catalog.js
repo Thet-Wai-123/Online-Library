@@ -133,9 +133,9 @@ router.get("/bookinstance/:id", book_instance_controller.bookinstance_detail);
 router.get("/bookinstances", book_instance_controller.bookinstance_list);
 
 // GET request for recommendation BookInstance
-router.get("/recommendation", book_instance_controller.recommendation_get);
+router.get("/recommendation", book_controller.recommendation_get);
 
 // POST request for recommendation BookInstance
-router.post("/recommendation", book_instance_controller.recommendation_post);
+router.post("/recommendation", book_controller.recommendation_post);
 
 module.exports = router;

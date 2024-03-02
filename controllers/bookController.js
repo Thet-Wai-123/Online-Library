@@ -114,7 +114,7 @@ exports.book_create_post = [
     // Create a Book object with escaped and trimmed data.
     const book = new Book({
       title: req.body.title,
-      author: req.body.author._id,
+      author: req.body.author,
       summary: req.body.summary,
       isbn: req.body.isbn,
       genre: req.body.genre,
@@ -281,6 +281,43 @@ exports.book_update_post = [
       const updatedBook = await Book.findByIdAndUpdate(req.params.id, book, {});
       // Redirect to book detail page.
       res.redirect(updatedBook.url);
+    }
+  }),
+];
+
+//Display Recommendation form on GET.
+exports.recommendation_get = asyncHandler(async (req, res, next) => {
+  const genres = await Genre.find();
+  res.render("recommendation_form", { genres: genres === null ? [] : genres });
+});
+
+//Returns a random recommended book on POST.
+exports.recommendation_post = [
+  // Convert the genre to an array.
+  asyncHandler(async (req, res, next) => {
+    const allGenres = (await Genre.find({}, { _id: 1 })).map((genreDoc) => {
+      return genreDoc._id.toString();
+    });
+    if (!Array.isArray(req.body.genre)) {
+      req.body.genre =
+        typeof req.body.genre === "undefined"
+          ? allGenres
+          : [req.body.genre];
+    }
+    next();
+  }),
+  asyncHandler(async (req, res, next) => {
+    // const bookWithMatchingGenre = await Book.aggregate([
+    //   { $match: { "genre": req.body.genre } },
+    //   { $sample: { size: 1 } },
+    // ]);
+    const bookWithMatchingGenre = await Book.findOne({
+      genre: { $in: req.body.genre },
+    }).exec();
+    if (bookWithMatchingGenre === null) {
+      res.render("recommendation_result");
+    } else {
+      res.render("recommendation_result", { book: bookWithMatchingGenre });
     }
   }),
 ];
