@@ -1,6 +1,6 @@
 # Overview
 
-This is a simple library catalog system where users can find information on books and perform CRUD (Create, Read, Update, Delete) operations. The system stores data in MongoDB and includes additional features such as recommending a random book and finding a book based on keywords using Regular Expressions.4
+This is a simple library catalog system where users can find information on books and perform CRUD (Create, Read, Update, Delete) operations. The system stores data in MongoDB and includes additional features such as recommending a random book and finding a book based on keywords using Regular Expressions.
 
 # Live Link
 https://online-library-f9xq.onrender.com/catalog
